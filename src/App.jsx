@@ -152,7 +152,7 @@ function Modal({ onClose, onLog }) {
   )
 }
 
-function Heart({ onClick, onHoverChange, purity }) {
+function Heart({ onClick, onHoverChange, purity, yOffset = 0 }) {
   const { scene } = useGLTF('/heart.glb')
   const ref = useRef()
   const [hovered, setHovered] = useState(false)
@@ -263,7 +263,8 @@ function Heart({ onClick, onHoverChange, purity }) {
     <primitive
       ref={ref}
       object={scene}
-onClick={onClick}
+      position={[0, yOffset, 0]}
+      onClick={onClick}
       onPointerOver={() => { setHovered(true); onHoverChange(true) }}
       onPointerOut={() => { setHovered(false); onHoverChange(false) }}
     />
@@ -330,7 +331,7 @@ export default function App() {
           <directionalLight position={[5, 5, 5]} intensity={1} color="#fff8f0" />
           <directionalLight position={[-5, -2, -5]} intensity={0.3} color="#ffd9b0" />
           <Environment preset="sunset" />
-          <Heart onClick={() => setShowModal(true)} onHoverChange={setHovered} purity={purity} />
+          <Heart onClick={() => setShowModal(true)} onHoverChange={setHovered} purity={purity} yOffset={window.innerWidth <= 480 ? 0.5 : 0} />
           <OrbitControls enableZoom={false} />
         </Canvas>
       </div>
