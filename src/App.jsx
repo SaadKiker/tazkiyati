@@ -4,20 +4,48 @@ import { useRef, useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import Auth from './Auth'
 
+// Base values are on a realistic scale.
+// Good deeds use diminishing returns: Δp = baseValue × severity × (1 − purity/100)
+// This means reaching 80%+ takes months of consistent practice.
+// Bad deeds are linear — full impact always, because you always have something to lose.
 const DEEDS = {
   good: [
-    { label: 'Salah', value: 5 },
-    { label: 'Quran', value: 8 },
-    { label: 'Dhikr', value: 3 },
-    { label: 'Sadaqah', value: 6 },
-    { label: 'Fasting', value: 10 },
+    { label: 'صلاة', sublabel: 'Salah', value: 2.0 },
+    { label: 'زكاة', sublabel: 'Zakat', value: 2.5 },
+    { label: 'حج', sublabel: 'Hajj', value: 5.0 },
+    { label: 'قيام الليل', sublabel: 'Qiyam al-Layl', value: 1.8 },
+    { label: 'صلاة الجماعة', sublabel: 'Congregational Prayer', value: 1.0 },
+    { label: 'تلاوة القرآن', sublabel: 'Quran Recitation', value: 1.5 },
+    { label: 'ذكر الله', sublabel: 'Dhikr', value: 0.8 },
+    { label: 'دعاء', sublabel: 'Duaa', value: 0.6 },
+    { label: 'صدقة', sublabel: 'Sadaqah', value: 1.2 },
+    { label: 'صوم النافلة', sublabel: 'Voluntary Fasting', value: 1.5 },
+    { label: 'عيادة المريض', sublabel: 'Visiting the Sick', value: 1.0 },
+    { label: 'إطعام الطعام', sublabel: 'Feeding Others', value: 1.0 },
+    { label: 'صدق', sublabel: 'Honesty', value: 0.8 },
+    { label: 'صبر', sublabel: 'Patience', value: 0.7 },
+    { label: 'كرم', sublabel: 'Generosity', value: 0.6 },
+    { label: 'رحمة', sublabel: 'Compassion', value: 0.6 },
+    { label: 'طلب العلم', sublabel: 'Seeking Knowledge', value: 0.9 },
+    { label: 'بر الوالدين', sublabel: 'Honoring Parents', value: 1.5 },
+    { label: 'غض البصر', sublabel: 'Lowering the Gaze', value: 0.8 },
+    { label: 'إصلاح ذات البين', sublabel: 'Reconciliation', value: 1.0 },
+    { label: 'حسن الخلق', sublabel: 'Good Character', value: 0.8 },
   ],
   bad: [
-    { label: 'Backbiting', value: -5 },
-    { label: 'Lying', value: -6 },
-    { label: 'Obscenity', value: -10 },
-    { label: 'Anger', value: -4 },
-    { label: 'Heedlessness', value: -3 },
+    { label: 'ترك الصلاة', sublabel: 'Missing Prayer', value: -4.0 },
+    { label: 'عقوق الوالدين', sublabel: 'Disrespecting Parents', value: -4.0 },
+    { label: 'غيبة', sublabel: 'Backbiting', value: -1.5 },
+    { label: 'كذب', sublabel: 'Lying', value: -1.5 },
+    { label: 'نميمة', sublabel: 'Tale-Bearing', value: -1.8 },
+    { label: 'مشاهدة الحرام', sublabel: 'Watching Haram', value: -2.0 },
+    { label: 'غضب', sublabel: 'Anger', value: -1.0 },
+    { label: 'غفلة', sublabel: 'Heedlessness', value: -0.6 },
+    { label: 'إهدار الوقت', sublabel: 'Wasting Time', value: -0.5 },
+    { label: 'سوء الكلام', sublabel: 'Bad Speech', value: -1.0 },
+    { label: 'كبر', sublabel: 'Arrogance', value: -2.0 },
+    { label: 'حسد', sublabel: 'Envy', value: -1.2 },
+    { label: 'فحش', sublabel: 'Obscenity', value: -1.5 },
   ]
 }
 
@@ -27,7 +55,7 @@ const SEVERITY = [
   { label: 'Strong', multiplier: 2 },
 ]
 
-function Modal({ onClose, onLog }) {
+function Modal({ onClose, onLog, purity }) {
   const [tab, setTab] = useState('good')
   const [selectedDeed, setSelectedDeed] = useState(null)
 
@@ -35,8 +63,16 @@ function Modal({ onClose, onLog }) {
     setSelectedDeed(deed)
   }
 
+  // Good deeds use diminishing returns so high purity takes months to reach.
+  // Bad deeds are always full impact — you always have something to lose.
+  const calcDelta = (deed, severityMultiplier) => {
+    const base = deed.value * severityMultiplier
+    if (base > 0) return base * (1 - purity / 100)
+    return base
+  }
+
   const handleSeverityClick = (severity) => {
-    const finalValue = selectedDeed.value * severity.multiplier
+    const finalValue = calcDelta(selectedDeed, severity.multiplier)
     onLog({ ...selectedDeed, value: finalValue, severity: severity.label })
     onClose()
   }
@@ -80,18 +116,21 @@ function Modal({ onClose, onLog }) {
             </div>
 
             {/* Deeds */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '28px', maxHeight: '340px', overflowY: 'auto' }}>
               {DEEDS[tab].map((deed) => (
                 <button key={deed.label} onClick={() => handleDeedClick(deed)} style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '14px 20px', border: '1px solid rgba(0,0,0,0.08)',
+                  padding: '12px 18px', border: '1px solid rgba(0,0,0,0.08)',
                   borderRadius: '14px', background: 'transparent', cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s', textAlign: 'left', flexShrink: 0
                 }}
                   onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
                   onMouseOut={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <span style={{ fontSize: '18px', color: '#2a2a2a' }}>{deed.label}</span>
+                  <div>
+                    <div style={{ fontSize: '17px', color: '#2a2a2a', fontWeight: '500' }}>{deed.sublabel}</div>
+                    <div style={{ fontSize: '11px', color: '#aaa', letterSpacing: '0.5px', marginTop: '2px' }}>{deed.label}</div>
+                  </div>
                 </button>
               ))}
             </div>
@@ -107,18 +146,21 @@ function Modal({ onClose, onLog }) {
         ) : (
           <>
             {/* Selected deed title */}
-            <h2 style={{ fontSize: '32px', color: '#2a2a2a', margin: '0 0 8px' }}>
-              {selectedDeed.label}
+            <h2 style={{ fontSize: '28px', color: '#2a2a2a', margin: '0 0 4px' }}>
+              {selectedDeed.sublabel}
             </h2>
-            <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#bbb', textTransform: 'uppercase', margin: '0 0 32px' }}>
+            <p style={{ fontSize: '13px', color: '#aaa', margin: '0 0 6px' }}>
+              {selectedDeed.label}
+            </p>
+            <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#bbb', textTransform: 'uppercase', margin: '0 0 28px' }}>
               How severe?
             </p>
 
             {/* Severity options */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
               {SEVERITY.map((s) => {
-                const finalValue = selectedDeed.value * s.multiplier
-                const isGood = selectedDeed.value > 0
+                const delta = calcDelta(selectedDeed, s.multiplier)
+                const isGood = delta > 0
                 return (
                   <button key={s.label} onClick={() => handleSeverityClick(s)} style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -131,7 +173,7 @@ function Modal({ onClose, onLog }) {
                   >
                     <span style={{ fontSize: '13px', letterSpacing: '2px', color: '#2a2a2a', textTransform: 'uppercase' }}>{s.label}</span>
                     <span style={{ fontSize: '12px', color: isGood ? '#7a9e7e' : '#c47a7a', fontWeight: '500' }}>
-                      {isGood ? `+${finalValue}%` : `${finalValue}%`}
+                      {isGood ? `+${delta.toFixed(2)}%` : `${delta.toFixed(2)}%`}
                     </span>
                   </button>
                 )
@@ -366,7 +408,7 @@ export default function App() {
         <h2 style={{ fontSize: '48px', color: '#2a2a2a', margin: '4px 0' }}>{Math.round(purity)}%</h2>
       </div>
 
-      {showModal && <Modal onClose={() => setShowModal(false)} onLog={handleLog} />}
+      {showModal && <Modal onClose={() => setShowModal(false)} onLog={handleLog} purity={purity} />}
 
     </div>
   )
