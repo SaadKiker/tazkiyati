@@ -360,12 +360,7 @@ export default function App() {
       <div className="purity-display" style={{
         position: 'absolute', left: '50%',
         transform: 'translateX(-50%)',
-        zIndex: 2, textAlign: 'center',
-        background: 'rgba(247,244,240,0.7)',
-        backdropFilter: 'blur(8px)',
-        borderRadius: '16px',
-        padding: '12px 28px',
-        whiteSpace: 'nowrap'
+        zIndex: 2, textAlign: 'center'
       }}>
         <p style={{ fontSize: '11px', letterSpacing: '4px', color: '#999', margin: 0, textTransform: 'uppercase' }}>Heart Purity</p>
         <h2 style={{ fontSize: '48px', color: '#2a2a2a', margin: '4px 0' }}>{Math.round(purity)}%</h2>
