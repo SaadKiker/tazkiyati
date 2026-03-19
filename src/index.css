@@ -33,7 +33,15 @@ button {
   text-transform: uppercase;
 }
 
+.purity-display {
+  bottom: 60px;
+}
+
 @media (max-width: 480px) {
+  .purity-display {
+    bottom: 120px;
+  }
+
   .card {
     width: calc(100vw - 32px);
     padding: 24px 18px;

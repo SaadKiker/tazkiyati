@@ -263,8 +263,7 @@ function Heart({ onClick, onHoverChange, purity }) {
     <primitive
       ref={ref}
       object={scene}
-      position={[0, 0.5, 0]}
-      onClick={onClick}
+onClick={onClick}
       onPointerOver={() => { setHovered(true); onHoverChange(true) }}
       onPointerOut={() => { setHovered(false); onHoverChange(false) }}
     />
@@ -357,8 +356,8 @@ export default function App() {
       </button>
 
       {/* Purity score */}
-      <div style={{
-        position: 'absolute', bottom: '90px', left: '50%',
+      <div className="purity-display" style={{
+        position: 'absolute', left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 2, textAlign: 'center',
         background: 'rgba(247,244,240,0.7)',
