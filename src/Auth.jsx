@@ -54,15 +54,15 @@ export default function Auth() {
 
       {/* Title */}
       <div style={{ position: 'absolute', top: '40px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: 1 }}>
-        <h1 style={{ fontSize: '28px', letterSpacing: '6px', color: '#2a2a2a', margin: 0 }}>TAZKIYATI</h1>
-        <p style={{ fontSize: '11px', letterSpacing: '4px', color: '#999', marginTop: '6px', textTransform: 'uppercase' }}>heart purity tracker</p>
+        <h1 className="app-title">TAZKIYATI</h1>
+        <p className="app-subtitle">heart purity tracker</p>
       </div>
 
       {/* Form */}
-      <div style={{
+      <div className="card" style={{
         position: 'relative', zIndex: 1,
         background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.08)',
-        borderRadius: '24px', padding: '40px', width: '340px',
+        borderRadius: '24px',
         boxShadow: '0 20px 60px rgba(0,0,0,0.08)'
       }}>
         <p style={{ fontSize: '11px', letterSpacing: '4px', color: '#999', textTransform: 'uppercase', margin: '0 0 28px', textAlign: 'center' }}>

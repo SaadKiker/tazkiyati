@@ -47,12 +47,10 @@ function Modal({ onClose, onLog }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'rgba(247,244,240,0.85)', backdropFilter: 'blur(12px)'
     }}>
-      <div style={{
+      <div className="card" style={{
         background: 'rgba(255,255,255,0.9)',
         border: '1px solid rgba(0,0,0,0.08)',
         borderRadius: '24px',
-        padding: '40px',
-        width: '360px',
         textAlign: 'center',
         boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
         transition: 'all 0.3s'
@@ -296,10 +294,7 @@ export default function App() {
     const newPurity = Math.min(100, Math.max(0, purity + deed.value))
     setPurity(newPurity)
 
-    await Promise.all([
-      supabase.from('heart_state').upsert({ user_id: session.user.id, purity: newPurity, updated_at: new Date().toISOString() }),
-      supabase.from('deeds').insert({ user_id: session.user.id, label: deed.label, severity: deed.severity, value: deed.value }),
-    ])
+    await supabase.from('heart_state').upsert({ user_id: session.user.id, purity: newPurity, updated_at: new Date().toISOString() })
   }
 
   if (session === undefined) return null
@@ -340,30 +335,27 @@ export default function App() {
 
       {/* App title */}
       <div style={{
-        position: 'absolute', top: '40px', left: '50%',
+        position: 'absolute', top: '24px', left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 2, textAlign: 'center'
       }}>
-        <h1 style={{ fontSize: '28px', letterSpacing: '6px', color: '#2a2a2a', margin: 0 }}>
-          TAZKIYATI
-        </h1>
-        <p style={{ fontSize: '11px', letterSpacing: '4px', color: '#999', marginTop: '6px', textTransform: 'uppercase' }}>
-          heart purity tracker
-        </p>
+        <h1 className="app-title">TAZKIYATI</h1>
+        <p className="app-subtitle">heart purity tracker</p>
       </div>
 
       {/* Sign out */}
       <button onClick={() => supabase.auth.signOut()} style={{
-        position: 'absolute', top: '40px', right: '40px', zIndex: 2,
+        position: 'absolute', top: '20px', right: '16px', zIndex: 2,
         background: 'none', border: 'none', cursor: 'pointer',
-        fontSize: '10px', letterSpacing: '3px', color: '#bbb', textTransform: 'uppercase'
+        fontSize: '10px', letterSpacing: '3px', color: '#bbb', textTransform: 'uppercase',
+        padding: '8px'
       }}>
         Sign Out
       </button>
 
       {/* Purity score */}
       <div style={{
-        position: 'absolute', bottom: '60px', left: '50%',
+        position: 'absolute', bottom: 'max(40px, calc(env(safe-area-inset-bottom) + 24px))', left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 2, textAlign: 'center'
       }}>

@@ -5,3 +5,47 @@
 html, body, * {
   font-family: 'Raleway', sans-serif !important;
 }
+
+/* Prevent double-tap zoom delay on buttons */
+button {
+  touch-action: manipulation;
+}
+
+/* Responsive card (modal + auth) */
+.card {
+  width: 360px;
+  padding: 40px;
+}
+
+/* Responsive app title */
+.app-title {
+  font-size: 28px;
+  letter-spacing: 6px;
+  color: #2a2a2a;
+  margin: 0;
+}
+
+.app-subtitle {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: #999;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: calc(100vw - 32px);
+    padding: 24px 18px;
+  }
+
+  .app-title {
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+
+  .app-subtitle {
+    font-size: 10px;
+    letter-spacing: 3px;
+  }
+}
