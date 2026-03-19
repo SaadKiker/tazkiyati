@@ -250,7 +250,9 @@ function Heart({ onClick, onHoverChange, purity }) {
   useFrame(() => {
     if (ref.current) {
       ref.current.rotation.y += 0.003
-      const targetScale = hovered ? 0.038 : 0.035
+      const isMobile = window.innerWidth <= 480
+      const baseScale = isMobile ? 0.024 : 0.035
+      const targetScale = hovered ? baseScale * 1.08 : baseScale
       ref.current.scale.setScalar(
         ref.current.scale.x + (targetScale - ref.current.scale.x) * 0.1
       )
